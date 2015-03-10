@@ -37,6 +37,7 @@ public class jmongosysbenchexecute {
     public static int numCollections;
     public static String dbName;
     public static int writerThreads;
+    public static int paddingSize;
     public static Integer numMaxInserts;
     public static long secondsPerFeedback;
     public static String logFileName;
@@ -71,9 +72,9 @@ public class jmongosysbenchexecute {
     }
 
     public static void main (String[] args) throws Exception {
-        if (args.length != 24) {
+        if (args.length != 25) {
             logMe("*** ERROR : CONFIGURATION ISSUE ***");
-            logMe("jsysbenchexecute [number of collections] [database name] [number of writer threads] [documents per collection] [seconds feedback] "+
+            logMe("jsysbenchexecute [number of collections] [database name] [number of writer threads] [size of additional padding] [documents per collection] [seconds feedback] "+
                                    "[log file name] [auto commit Y/N] [runtime (seconds)] [range size] [point selects] "+
                                    "[simple ranges] [sum ranges] [order ranges] [distinct ranges] [index updates] [non index updates] [inserts] [writeconcern] "+
                                    "[max tps] [server] [port] [seed] [username] [password]");
@@ -83,27 +84,28 @@ public class jmongosysbenchexecute {
         numCollections = Integer.valueOf(args[0]);
         dbName = args[1];
         writerThreads = Integer.valueOf(args[2]);
-        numMaxInserts = Integer.valueOf(args[3]);
-        secondsPerFeedback = Long.valueOf(args[4]);
-        logFileName = args[5];
-        autoCommit = args[6];
-        runSeconds = Integer.valueOf(args[7]);
-        oltpRangeSize = Integer.valueOf(args[8]);
-        oltpPointSelects = Integer.valueOf(args[9]);
-        oltpSimpleRanges = Integer.valueOf(args[10]);
-        oltpSumRanges = Integer.valueOf(args[11]);
-        oltpOrderRanges = Integer.valueOf(args[12]);
-        oltpDistinctRanges = Integer.valueOf(args[13]);
-        oltpIndexUpdates = Integer.valueOf(args[14]);
-        oltpNonIndexUpdates = Integer.valueOf(args[15]);
-        oltpInserts = Integer.valueOf(args[16]);
-        myWriteConcern = args[17];
-        maxTPS = Integer.valueOf(args[18]);
-        serverName = args[19];
-        serverPort = Integer.valueOf(args[20]);
-        rngSeed = Long.valueOf(args[21]);
-        userName = args[22];
-        passWord = args[23];
+        paddingSize = Integer.valueOf(args[3]);
+        numMaxInserts = Integer.valueOf(args[4]);
+        secondsPerFeedback = Long.valueOf(args[5]);
+        logFileName = args[6];
+        autoCommit = args[7];
+        runSeconds = Integer.valueOf(args[8]);
+        oltpRangeSize = Integer.valueOf(args[9]);
+        oltpPointSelects = Integer.valueOf(args[10]);
+        oltpSimpleRanges = Integer.valueOf(args[11]);
+        oltpSumRanges = Integer.valueOf(args[12]);
+        oltpOrderRanges = Integer.valueOf(args[13]);
+        oltpDistinctRanges = Integer.valueOf(args[14]);
+        oltpIndexUpdates = Integer.valueOf(args[15]);
+        oltpNonIndexUpdates = Integer.valueOf(args[16]);
+        oltpInserts = Integer.valueOf(args[17]);
+        myWriteConcern = args[18];
+        maxTPS = Integer.valueOf(args[19]);
+        serverName = args[20];
+        serverPort = Integer.valueOf(args[21]);
+        rngSeed = Long.valueOf(args[22]);
+        userName = args[23];
+        passWord = args[24];
 
         maxThreadTPS = (maxTPS / writerThreads) + 1;
 
@@ -134,6 +136,7 @@ public class jmongosysbenchexecute {
         logMe("  collections              = %d",numCollections);
         logMe("  database name            = %s",dbName);
         logMe("  writer threads           = %d",writerThreads);
+        logMe("  additional padding size  = %d",paddingSize);
         logMe("  documents per collection = %,d",numMaxInserts);
         logMe("  feedback seconds         = %,d",secondsPerFeedback);
         logMe("  log file                 = %s",logFileName);
@@ -270,6 +273,13 @@ public class jmongosysbenchexecute {
 
             boolean auto_commit = !autoCommit.toLowerCase().equals("n");
 
+            // initialize char array to fill into document
+            char[] pad = new char[paddingSize];
+            for (int i = 0; i < paddingSize; i++) {
+              pad[i] = '#';
+            }
+            String padStr = String.valueOf(pad);            
+            
             while (allDone == 0) {
                 if ((numTransactions - numLastTransactions) >= maxThreadTPS) {
                     // pause until a second has passed
@@ -474,8 +484,8 @@ public class jmongosysbenchexecute {
                         doc.put("k",rand.nextInt(numMaxInserts)+1);
                         String cVal = sysbenchString(rand, "###########-###########-###########-###########-###########-###########-###########-###########-###########-###########");
                         doc.put("c",cVal);
-                        String padVal = sysbenchString(rand, "###########-###########-###########-###########-###########");
-                        doc.put("pad",padVal);
+                        //String padVal = sysbenchString(rand, "###########-###########-###########-###########-###########");
+                        doc.put("pad",padStr);
                         WriteResult wrInsert = coll.insert(doc);
                     }
 

@@ -29,6 +29,7 @@ public class jmongosysbenchload {
     public static String dbName;
     public static int writerThreads;
     public static Integer numMaxInserts;
+    public static int paddingSize;
     public static int documentsPerInsert;
     public static long insertsPerFeedback;
     public static long secondsPerFeedback;
@@ -42,33 +43,35 @@ public class jmongosysbenchload {
     public static String userName;
     public static String passWord;
 
+    public static int NUM_ARGS = 16;
     public static int allDone = 0;
 
     public jmongosysbenchload() {
     }
 
     public static void main (String[] args) throws Exception {
-        if (args.length != 15) {
+        if (args.length != NUM_ARGS) {
             logMe("*** ERROR : CONFIGURATION ISSUE ***");
-            logMe("jsysbenchload [number of collections] [database name] [number of writer threads] [documents per collection] [documents per insert] [inserts feedback] [seconds feedback] [log file name] [compression type] [basement node size (bytes)]  [writeconcern] [server] [port] [username] [password]");
+            logMe("jsysbenchload [number of collections] [database name] [number of writer threads] [size of additional padding] [documents per collection] [documents per insert] [inserts feedback] [seconds feedback] [log file name] [compression type] [basement node size (bytes)]  [writeconcern] [server] [port] [username] [password]");
             System.exit(1);
         }
 
         numCollections = Integer.valueOf(args[0]);
         dbName = args[1];
         writerThreads = Integer.valueOf(args[2]);
-        numMaxInserts = Integer.valueOf(args[3]);
-        documentsPerInsert = Integer.valueOf(args[4]);
-        insertsPerFeedback = Long.valueOf(args[5]);
-        secondsPerFeedback = Long.valueOf(args[6]);
-        logFileName = args[7];
-        compressionType = args[8];
-        basementSize = Integer.valueOf(args[9]);
-        myWriteConcern = args[10];
-        serverName = args[11];
-        serverPort = Integer.valueOf(args[12]);
-        userName = args[13];
-        passWord = args[14];
+        paddingSize = Integer.valueOf(args[3]);
+        numMaxInserts = Integer.valueOf(args[4]);
+        documentsPerInsert = Integer.valueOf(args[5]);
+        insertsPerFeedback = Long.valueOf(args[6]);
+        secondsPerFeedback = Long.valueOf(args[7]);
+        logFileName = args[8];
+        compressionType = args[9];
+        basementSize = Integer.valueOf(args[10]);
+        myWriteConcern = args[11];
+        serverName = args[12];
+        serverPort = Integer.valueOf(args[13]);
+        userName = args[14];
+        passWord = args[15];
 
         WriteConcern myWC = new WriteConcern();
         if (myWriteConcern.toLowerCase().equals("fsync_safe")) {
@@ -97,6 +100,7 @@ public class jmongosysbenchload {
         logMe("  %d collections",numCollections);
         logMe("  database name = %s",dbName);
         logMe("  %d writer thread(s)",writerThreads);
+        logMe("  %d document size",paddingSize);
         logMe("  %,d documents per collection",numMaxInserts);
         logMe("  Documents Per Insert = %d",documentsPerInsert);
         logMe("  Feedback every %,d seconds(s)",secondsPerFeedback);
@@ -293,9 +297,15 @@ public class jmongosysbenchload {
                 logMe("Writer thread %d : started to load collection %s",threadNumber, collectionName);
 
                 BasicDBObject[] aDocs = new BasicDBObject[documentsPerInsert];
-
                 int numRounds = numMaxInserts / documentsPerInsert;
-
+                
+                // initialize char array to fill into document
+                char[] pad = new char[paddingSize];
+                for (int i = 0; i < paddingSize; i++) {
+                  pad[i] = '#';
+                }
+                String padStr = String.valueOf(pad);
+                
                 for (int roundNum = 0; roundNum < numRounds; roundNum++) {
                     for (int i = 0; i < documentsPerInsert; i++) {
                         id++;
@@ -304,8 +314,8 @@ public class jmongosysbenchload {
                         doc.put("k",rand.nextInt(numMaxInserts)+1);
                         String cVal = sysbenchString(rand, "###########-###########-###########-###########-###########-###########-###########-###########-###########-###########");
                         doc.put("c",cVal);
-                        String padVal = sysbenchString(rand, "###########-###########-###########-###########-###########");
-                        doc.put("pad",padVal);
+                        //String padVal = sysbenchString(rand, "###########-###########-###########-###########-###########");
+                        doc.put("pad",padStr);
                         aDocs[i]=doc;
                     }
 
