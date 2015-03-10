@@ -40,7 +40,7 @@ export MONGO_BASEMENT=65536
 export NUM_COLLECTIONS=16
 
 # additional padding size(bytes) per document to create for the benchmark
-#   valid values : integer > 0
+#   valid values : integer >= 0
 export NUM_PADDING_SIZE=20000
 
 # number of documents to maintain per collection
