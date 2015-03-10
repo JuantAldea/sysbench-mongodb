@@ -136,7 +136,7 @@ public class jmongosysbenchexecute {
         logMe("  collections              = %d",numCollections);
         logMe("  database name            = %s",dbName);
         logMe("  writer threads           = %d",writerThreads);
-        logMe("  additional padding size  = %d",paddingSize);
+        logMe("  additional padding(bytes)= %d",paddingSize);
         logMe("  documents per collection = %,d",numMaxInserts);
         logMe("  feedback seconds         = %,d",secondsPerFeedback);
         logMe("  log file                 = %s",logFileName);

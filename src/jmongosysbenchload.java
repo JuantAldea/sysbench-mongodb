@@ -100,7 +100,7 @@ public class jmongosysbenchload {
         logMe("  %d collections",numCollections);
         logMe("  database name = %s",dbName);
         logMe("  %d writer thread(s)",writerThreads);
-        logMe("  %d addtional padding size",paddingSize);
+        logMe("  %d (bytes) padding per document",paddingSize);
         logMe("  %,d documents per collection",numMaxInserts);
         logMe("  Documents Per Insert = %d",documentsPerInsert);
         logMe("  Feedback every %,d seconds(s)",secondsPerFeedback);
