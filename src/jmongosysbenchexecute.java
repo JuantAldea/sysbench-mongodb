@@ -471,22 +471,26 @@ public class jmongosysbenchexecute {
                       
                         //db.sbtest8.remove({_id: 5523412})
 
-                        //int startId = rand.nextInt(numMaxInserts)+1;
+                        int startId = rand.nextInt(numMaxInserts)+1;
 
-                        //WriteResult wrRemove = coll.remove(new BasicDBObject("_id", startId));
+                        WriteResult wrRemove = coll.remove(new BasicDBObject("_id", startId));
 
                         //c_val = sb_rand_str([[###########-###########-###########-###########-###########-###########-###########-###########-###########-###########]])
                         //pad_val = sb_rand_str([[###########-###########-###########-###########-###########]])
                         //rs = db_query("INSERT INTO " .. table_name ..  " (id, k, c, pad) VALUES " .. string.format("(%d, %d, '%s', '%s')",i, sb_rand(1, oltp_table_size) , c_val, pad_val))
 
                         BasicDBObject doc = new BasicDBObject();
-                        //doc.put("_id",startId);
+                        doc.put("_id",startId);
                         doc.put("k",rand.nextInt(numMaxInserts)+1);
                         String cVal = sysbenchString(rand, "###########-###########-###########-###########-###########-###########-###########-###########-###########-###########");
                         doc.put("c",cVal);
                         //String padVal = sysbenchString(rand, "###########-###########-###########-###########-###########");
                         doc.put("pad",padStr);
-                        WriteResult wrInsert = coll.insert(doc);
+                        try {
+                          WriteResult wrInsert = coll.insert(doc);
+                        } catch (Exception e) {
+                          continue;
+                        };
                     }
 
                     globalSysbenchTransactions.incrementAndGet();
