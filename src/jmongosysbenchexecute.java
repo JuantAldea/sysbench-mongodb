@@ -485,7 +485,8 @@ public class jmongosysbenchexecute {
                         String cVal = sysbenchString(rand, "###########-###########-###########-###########-###########-###########-###########-###########-###########-###########");
                         doc.put("c",cVal);
                         //String padVal = sysbenchString(rand, "###########-###########-###########-###########-###########");
-                        doc.put("pad",padStr);
+                        if (!padStr.isEmpty())
+                          doc.put("pad",padStr);
                         try {
                           WriteResult wrInsert = coll.insert(doc);
                         } catch (Exception e) {

@@ -315,7 +315,8 @@ public class jmongosysbenchload {
                         String cVal = sysbenchString(rand, "###########-###########-###########-###########-###########-###########-###########-###########-###########-###########");
                         doc.put("c",cVal);
                         //String padVal = sysbenchString(rand, "###########-###########-###########-###########-###########");
-                        doc.put("pad",padStr);
+                        if (!padStr.isEmpty())
+                          doc.put("pad",padStr);
                         aDocs[i]=doc;
                     }
 
