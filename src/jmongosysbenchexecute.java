@@ -114,7 +114,7 @@ public class jmongosysbenchexecute {
             myWC = WriteConcern.FSYNC_SAFE;
         }
         else if ((myWriteConcern.toLowerCase().equals("none"))) {
-            myWC = WriteConcern.NONE;
+            myWC = WriteConcern.UNACKNOWLEDGED;
         }
         else if ((myWriteConcern.toLowerCase().equals("normal"))) {
             myWC = WriteConcern.NORMAL;
@@ -294,21 +294,12 @@ public class jmongosysbenchexecute {
                     nextMs = System.currentTimeMillis() + 1000;
                 }
 
-                // if TokuMX, lock onto current connection (do not pool)
-                if (bIsTokuMX && !auto_commit) {
-                    db.requestStart();
-                    db.command("beginTransaction");
-                }
 
                 String collectionName = "sbtest" + Integer.toString(rand.nextInt(numCollections)+1);
                 DBCollection coll = db.getCollection(collectionName);
 
                 try {
-                    if (bIsTokuMX && !auto_commit) {
-                        // make sure a connection is available, given that we are not pooling
-                        db.requestEnsureConnection();
-                    }
-
+                    
                     for (int i=1; i <= oltpPointSelects; i++) {
                         int startId = rand.nextInt(numMaxInserts)+1;
 
@@ -399,7 +390,7 @@ public class jmongosysbenchexecute {
                         globalRangeQueries.incrementAndGet();
                         numTransactions += 1;
                     }
-
+/*
                     for (int i=1; i <= oltpIndexUpdates; i++) {
                         int startId = rand.nextInt(numMaxInserts)+1;
                         WriteResult wrUpdate = coll.update(new BasicDBObject("_id", startId), new BasicDBObject("$inc", new BasicDBObject("k",1)), false, false);
@@ -432,17 +423,11 @@ public class jmongosysbenchexecute {
                         };
                         numTransactions += 1;
                     }
-
+*/
                     globalSysbenchTransactions.incrementAndGet();
                     //numTransactions += 1;
 
                 } finally {
-                    if (bIsTokuMX && !auto_commit) {
-                        // commit the transaction and release current connection in the pool
-                        db.command("commitTransaction");
-                        //--db.command("rollbackTransaction")
-                        db.requestDone();
-                    }
                 }
             }
             globalWriterThreads.decrementAndGet();
@@ -527,18 +512,32 @@ public class jmongosysbenchexecute {
                     double thisIntervalInsertsPerSecond = thisIntervalInserts/(double)thisIntervalMs*1000.0;
                     double thisInsertsPerSecond = thisInserts/(double)elapsed*1000.0;
                     
-                    logMe("%,d seconds : cum tps=%,.2f : int tps=%,.2f : cum ips=%,.2f : int ips=%,.2f : writers=%,d", elapsed / 1000l, thisSysbenchTransactionsPerSecond, thisIntervalSysbenchTransactionsPerSecond, thisInsertsPerSecond, thisIntervalInsertsPerSecond, thisWriterThreads);
+                    //logMe("%,d seconds : cum tps=%,.2f : int tps=%,.2f : cum ips=%,.2f : int ips=%,.2f : writers=%,d",
+                    logMe("%,d seconds : cum tps=%,.2f : int tps=%,.2f : writers=%,d",
+			elapsed / 1000l, 
+			thisSysbenchTransactionsPerSecond, 
+			thisIntervalSysbenchTransactionsPerSecond,
+			//thisInsertsPerSecond, 
+			//thisIntervalInsertsPerSecond, 
+			thisWriterThreads);
                     
                     try {
                         if (outputHeader)
                         {
-                            writer.write("elap_secs\tcum_tps\tint_tps\tcum_ips\tint_ips\n");
+                            //writer.write("elap_secs\tcum_tps\tint_tps\tcum_ips\tint_ips\n");
+                            writer.write("elap_secs\tcum_tps\tint_tps\n");
                             outputHeader = false;
                         }
 
                         String statusUpdate = "";
 
-                        statusUpdate = String.format("%d\t%.2f\t%.2f\t%.2f\t%.2f\n", elapsed / 1000l, thisSysbenchTransactionsPerSecond, thisIntervalSysbenchTransactionsPerSecond, thisInsertsPerSecond, thisIntervalInsertsPerSecond);
+                        //statusUpdate = String.format("%d\t%.2f\t%.2f\t%.2f\t%.2f\n",
+                        statusUpdate = String.format("%d\t%.2f\t%.2f\n",
+				elapsed / 1000l,
+				thisSysbenchTransactionsPerSecond,
+				thisIntervalSysbenchTransactionsPerSecond);
+				//thisInsertsPerSecond, 
+				//thisIntervalInsertsPerSecond);
 
                         writer.write(statusUpdate);
                         writer.flush();

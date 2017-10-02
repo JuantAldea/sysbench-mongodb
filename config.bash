@@ -6,7 +6,7 @@ export DB_NAME=sbtest
 # database username on DB_NAME
 #  Use USERNAME=none 
 #  to login to mongodb without using credentials.
-export USERNAME=myuser
+export USERNAME=none
 
 # database password to use for USERNAME
 export PASSWORD=mypass
@@ -37,27 +37,29 @@ export MONGO_BASEMENT=65536
 
 # number of collections to create for the benchmark
 #   valid values : integer > 0
-export NUM_COLLECTIONS=16
+export NUM_COLLECTIONS=20
 
 # additional padding size(bytes) per document to create for the benchmark
 #   valid values : integer >= 0
-export NUM_PADDING_SIZE=20000
+export NUM_PADDING_SIZE=200000
 
 # number of documents to maintain per collection
 #   valid values : integer > 0
-export NUM_DOCUMENTS_PER_COLLECTION=10000000
+export NUM_DOCUMENTS_PER_COLLECTION=6000
 
 # total number of documents to insert per "batch"
 #   valid values : integer > 0
-export NUM_DOCUMENTS_PER_INSERT=1000
+#export NUM_DOCUMENTS_PER_INSERT=1000
+export NUM_DOCUMENTS_PER_INSERT=1
 
 # total number of simultaneous insertion threads (for loader)
 #   valid values : integer > 0
-export NUM_LOADER_THREADS=8
+#export NUM_LOADER_THREADS=8
+export NUM_LOADER_THREADS=64
 
 # total number of simultaneous benchmark threads
 #   valid values : integer > 0
-export NUM_WRITER_THREADS=64
+export NUM_WRITER_THREADS=20
 
 # run the benchmark for this many minutes
 #   valid values : intever > 0

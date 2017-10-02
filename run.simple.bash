@@ -19,7 +19,7 @@ else
    echo "Unable to read config $FILE"
    exit 1
 fi
-
+export CLASSPATH=$PWD/mongo-java-driver-3.5.0.jar:$CLASSPATH
 javac -cp $CLASSPATH:$PWD/src src/jmongosysbenchload.java
 javac -cp $CLASSPATH:$PWD/src src/jmongosysbenchexecute.java
 
