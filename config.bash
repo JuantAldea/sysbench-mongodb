@@ -63,7 +63,7 @@ export NUM_WRITER_THREADS=20
 
 # run the benchmark for this many minutes
 #   valid values : intever > 0
-export RUN_TIME_MINUTES=10
+export RUN_TIME_MINUTES=5
 export RUN_TIME_SECONDS=$[RUN_TIME_MINUTES*60]
 
 # write concern for the benchmark client
@@ -92,34 +92,34 @@ export SYSBENCH_RANGE_SIZE=100
 
 # number of point queries per sysbench "transaction"
 #   valid values : integer >= 0
-export SYSBENCH_POINT_SELECTS=10
+export SYSBENCH_POINT_SELECTS=1
 
 # number of simple range queries per sysbench "transaction"
 #   valid values : integer >= 0
-export SYSBENCH_SIMPLE_RANGES=1
+export SYSBENCH_SIMPLE_RANGES=0
 
 # number of aggregation queries per sysbench "transaction"
 #   valid values : integer >= 0
-export SYSBENCH_SUM_RANGES=1
+export SYSBENCH_SUM_RANGES=0
 
 # number of ordered range queries per sysbench "transaction"
 #   valid values : integer >= 0
-export SYSBENCH_ORDER_RANGES=1
+export SYSBENCH_ORDER_RANGES=0
 
 # number of distinct range queries per sysbench "transaction"
 #   valid values : integer >= 0
-export SYSBENCH_DISTINCT_RANGES=1
+export SYSBENCH_DISTINCT_RANGES=0
 
 # set all of the following 3 parameters to zero for a read-only benchmark
 
 # number of indexed updates per sysbench "transaction"
 #   valid values : integer >= 0
-export SYSBENCH_INDEX_UPDATES=1
+export SYSBENCH_INDEX_UPDATES=0
 
 # number of non-indexed updates per sysbench "transaction"
 #   valid values : integer >= 0
-export SYSBENCH_NON_INDEX_UPDATES=1
+export SYSBENCH_NON_INDEX_UPDATES=0
 
 # number of delete/insert operations per sysbench "transaction"
 #   valid values : integer >= 0
-export SYSBENCH_INSERTS=1
+export SYSBENCH_INSERTS=0

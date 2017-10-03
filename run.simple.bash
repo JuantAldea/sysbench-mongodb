@@ -25,7 +25,7 @@ javac -cp $CLASSPATH:$PWD/src src/jmongosysbenchexecute.java
 
 
 # load the data
-
+echo $DOLOAD
 if [[ $DOLOAD = "yes" ]]; then
     echo Do load at $( date )
     export LOG_NAME=mongoSysbenchLoad-${NUM_COLLECTIONS}-${NUM_DOCUMENTS_PER_COLLECTION}-${NUM_LOADER_THREADS}.txt
