@@ -21,6 +21,18 @@ import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
+import com.mongodb.client.model.Aggregates.*;
+
+ import com.mongodb.Block;
+ import com.mongodb.MongoClient;
+ import com.mongodb.client.MongoCollection;
+ import com.mongodb.client.MongoDatabase;
+ import com.mongodb.client.model.Aggregates;
+ import com.mongodb.client.model.Accumulators;
+ import com.mongodb.client.model.Projections;
+ import com.mongodb.client.model.Filters;
+     
+ import org.bson.Document;
 
 public class jmongosysbenchexecute {
     public static AtomicLong globalInserts = new AtomicLong(0);
@@ -301,14 +313,22 @@ public class jmongosysbenchexecute {
                 try {
                     
                     for (int i=1; i <= oltpPointSelects; i++) {
+
+       			BasicDBObject object = new BasicDBObject("$sample", new BasicDBObject("size", 1));
+			AggregationOutput output = coll.aggregate(object);
+			output.results().iterator().next();
+/*
+			for (DBObject result : output.results()) {
+        			System.out.println("output >> " + result.get("_id"));
+			}
+
+/*
                         int startId = rand.nextInt(numMaxInserts)+1;
-
-                        BasicDBObject query = new BasicDBObject("_id", startId);
-                        BasicDBObject columns = new BasicDBObject("c", 1).append("_id", 0);
-
-                        DBObject myDoc = coll.findOne(query, columns);
-                        //System.out.println(myDoc);
-
+	                BasicDBObject query = new BasicDBObject("_id", startId);
+                        //DBObject myDoc = coll.findOne(query, columns);
+                        DBObject myDoc = coll.findOne(query);
+ //      			System.out.println("ORIG >> " + startId +  " "  + myDoc.get("_id"));
+*/
                         globalPointQueries.incrementAndGet();
                         numTransactions += 1;
                     }
@@ -390,7 +410,7 @@ public class jmongosysbenchexecute {
                         globalRangeQueries.incrementAndGet();
                         numTransactions += 1;
                     }
-/*
+
                     for (int i=1; i <= oltpIndexUpdates; i++) {
                         int startId = rand.nextInt(numMaxInserts)+1;
                         WriteResult wrUpdate = coll.update(new BasicDBObject("_id", startId), new BasicDBObject("$inc", new BasicDBObject("k",1)), false, false);
@@ -423,7 +443,7 @@ public class jmongosysbenchexecute {
                         };
                         numTransactions += 1;
                     }
-*/
+
                     globalSysbenchTransactions.incrementAndGet();
                     //numTransactions += 1;
 
